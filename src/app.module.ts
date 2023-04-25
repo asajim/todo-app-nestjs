@@ -4,9 +4,20 @@ import { AppService } from './app.service';
 import { APP_PIPE } from '@nestjs/core';
 import { LoggerMiddleware } from './log/logger.middleware';
 import { TodoModule } from './todo/todo.module';
+import { ConfigModule } from '@nestjs/config';
+import { validationSchema } from '../config/validation';
+import { configuration } from '../config/configuration';
 
 @Module({
-  imports: [TodoModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: `${process.cwd()}/config/env/${process.env.NODE_ENV}.env`,
+      load: [configuration],
+      validationSchema: validationSchema,
+    }),
+    TodoModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,
