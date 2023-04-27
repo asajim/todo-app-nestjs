@@ -7,6 +7,8 @@ import { TodoModule } from './todo/todo.module';
 import { ConfigModule } from '@nestjs/config';
 import { validationSchema } from '../config/validation';
 import { configuration } from '../config/configuration';
+import { TypeOrmConfigService } from './config/typeorm-config.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -16,6 +18,7 @@ import { configuration } from '../config/configuration';
       load: [configuration],
       validationSchema: validationSchema,
     }),
+    TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     TodoModule,
   ],
   controllers: [AppController],

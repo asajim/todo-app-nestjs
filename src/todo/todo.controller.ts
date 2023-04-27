@@ -14,6 +14,7 @@ import { TodoService } from './todo.service';
 import { CreateTodoItemDto } from './dto/create-todo-item.dto';
 import { UpdateTodoItemDto } from './dto/update-todo-item.dto';
 import { BasicAuthGuard } from '../auth/basic-auth-guard.service';
+import { IdParamDto } from './dto/id-param.dto';
 
 @UseGuards(BasicAuthGuard)
 @ApiTags('Todo')
@@ -23,34 +24,34 @@ export class TodoController {
 
   @ApiOperation({ summary: 'Get all todo items' })
   @Get()
-  getTodoItems(): TodoItemDto[] {
-    return this.todoService.getTodoItems();
+  async getTodoItems(): Promise<TodoItemDto[]> {
+    return await this.todoService.getTodoItems();
   }
 
   @ApiOperation({ summary: 'Get todo item by id' })
   @Get(':id')
-  getTodoItemById(@Param() { id }: { id: string }): TodoItemDto {
-    return this.todoService.getTodoItem(id);
+  async getTodoItemById(@Param() { id }: IdParamDto): Promise<TodoItemDto> {
+    return await this.todoService.getTodoItem(id);
   }
 
   @ApiOperation({ summary: 'Create new todo item' })
   @Post()
-  addTodoItem(@Body() request: CreateTodoItemDto): TodoItemDto {
-    return this.todoService.addTodoItem(request);
+  async addTodoItem(@Body() request: CreateTodoItemDto): Promise<TodoItemDto> {
+    return await this.todoService.addTodoItem(request);
   }
 
   @ApiOperation({ summary: 'Update todo item' })
   @Put(':id')
-  updateTodoItem(
-    @Param() { id }: { id: string },
+  async updateTodoItem(
+    @Param() { id }: IdParamDto,
     @Body() request: UpdateTodoItemDto,
-  ): TodoItemDto {
-    return this.todoService.updateTodoItem(id, request);
+  ): Promise<TodoItemDto> {
+    return await this.todoService.updateTodoItem(id, request);
   }
 
   @ApiOperation({ summary: 'Delete todo item' })
   @Delete(':id')
-  deleteTodoItem(@Param() { id }: { id: string }) {
-    this.todoService.deleteTodoItem(id);
+  async deleteTodoItem(@Param() { id }: IdParamDto) {
+    await this.todoService.deleteTodoItem(id);
   }
 }

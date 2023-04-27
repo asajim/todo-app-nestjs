@@ -1,52 +1,72 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { TodoItemDto } from './dto/todo-item.dto';
 import { CreateTodoItemDto } from './dto/create-todo-item.dto';
 import { UpdateTodoItemDto } from './dto/update-todo-item.dto';
+import { Repository } from 'typeorm';
+import { TodoItemEntity } from './entity/todo-item.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { validateSync } from 'class-validator';
 
 @Injectable()
 export class TodoService {
-  private items: TodoItemDto[] = [];
+  constructor(
+    @InjectRepository(TodoItemEntity)
+    private todoItemRepository: Repository<TodoItemEntity>,
+  ) {}
 
-  getTodoItems(): TodoItemDto[] {
-    return this.items;
+  async getTodoItems(): Promise<TodoItemDto[]> {
+    const items = await this.todoItemRepository.find();
+    return items.map(this.toDto);
   }
 
-  getTodoItem(id: string): TodoItemDto {
-    const item = this.items.find((value) => value.id === id);
+  async getTodoItem(id: number): Promise<TodoItemDto> {
+    const item = await this.todoItemRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
     if (!item) {
       throw new NotFoundException();
     }
-    return item;
+    return this.toDto(item);
   }
 
-  addTodoItem(request: CreateTodoItemDto) {
-    const newItem = {
-      id: (this.items.length + 1).toString(),
-      created: new Date().toISOString(),
-      modified: new Date().toISOString(),
-      deadline: undefined,
-      title: request.title,
-      isDone: false,
-    };
-    this.items.push(newItem);
-    return newItem;
+  async addTodoItem(request: CreateTodoItemDto): Promise<TodoItemDto> {
+    const newItem = await this.todoItemRepository.save(request);
+    return this.toDto(newItem);
   }
 
-  updateTodoItem(id: string, request: UpdateTodoItemDto) {
-    const index = this.items.findIndex((value) => value.id === id);
-    if (index === -1) {
+  async updateTodoItem(id: number, request: UpdateTodoItemDto) {
+    const item = await this.todoItemRepository.findOne({
+      where: { id: id },
+    });
+    if (!item) {
       throw new NotFoundException();
     }
-    const newItem = { ...this.items[index], ...request };
-    this.items[index] = newItem;
-    return newItem;
+    const result = await this.todoItemRepository.save({ ...item, ...request });
+    return this.toDto(result);
   }
 
-  deleteTodoItem(id: string) {
-    const index = this.items.findIndex((value) => value.id === id);
-    if (index === -1) {
-      throw new NotFoundException();
+  async deleteTodoItem(id: number) {
+    await this.todoItemRepository.delete({
+      id: id,
+    });
+  }
+
+  toDto(entity: TodoItemEntity): TodoItemDto {
+    const dto: TodoItemDto = { ...entity };
+    const errors = validateSync(dto);
+    if (errors.length) {
+      throw new InternalServerErrorException(
+        `Invalid fields at ${TodoItemDto.name}: ${errors
+          .map((value) => Object.values(value.constraints))
+          .join(', ')}`,
+      );
     }
-    this.items.splice(index, 1);
+    return dto;
   }
 }
