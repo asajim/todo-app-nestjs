@@ -5,8 +5,8 @@ import { APP_PIPE } from '@nestjs/core';
 import { LoggerMiddleware } from './log/logger.middleware';
 import { TodoModule } from './todo/todo.module';
 import { ConfigModule } from '@nestjs/config';
-import { validationSchema } from '../config/validation';
-import { configuration } from '../config/configuration';
+import { validationSchema } from './config/validation';
+import { configuration } from './config/configuration';
 import { TypeOrmConfigService } from './config/typeorm-config.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -14,7 +14,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `${process.cwd()}/config/env/${process.env.NODE_ENV}.env`,
+      envFilePath: `.env.${process.env.NODE_ENV}`,
       load: [configuration],
       validationSchema: validationSchema,
     }),
