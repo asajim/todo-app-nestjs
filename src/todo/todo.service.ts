@@ -20,7 +20,7 @@ export class TodoService {
 
   async getTodoItems(): Promise<TodoItemDto[]> {
     const items = await this.todoItemRepository.find();
-    return items.map(this.toDto);
+    return items.map(this.convertEntityToDto);
   }
 
   async getTodoItem(id: number): Promise<TodoItemDto> {
@@ -32,12 +32,12 @@ export class TodoService {
     if (!item) {
       throw new NotFoundException();
     }
-    return this.toDto(item);
+    return this.convertEntityToDto(item);
   }
 
   async addTodoItem(request: CreateTodoItemDto): Promise<TodoItemDto> {
     const newItem = await this.todoItemRepository.save(request);
-    return this.toDto(newItem);
+    return this.convertEntityToDto(newItem);
   }
 
   async updateTodoItem(id: number, request: UpdateTodoItemDto) {
@@ -47,8 +47,13 @@ export class TodoService {
     if (!item) {
       throw new NotFoundException();
     }
-    const result = await this.todoItemRepository.save({ ...item, ...request });
-    return this.toDto(result);
+    const result = await this.todoItemRepository.save({
+      id: item.id,
+      created: item.created,
+      modified: item.modified,
+      ...request,
+    });
+    return this.convertEntityToDto(result);
   }
 
   async deleteTodoItem(id: number) {
@@ -57,7 +62,7 @@ export class TodoService {
     });
   }
 
-  toDto(entity: TodoItemEntity): TodoItemDto {
+  convertEntityToDto(entity: TodoItemEntity): TodoItemDto {
     const dto: TodoItemDto = { ...entity };
     const errors = validateSync(dto);
     if (errors.length) {
