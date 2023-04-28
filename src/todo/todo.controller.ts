@@ -31,7 +31,7 @@ export class TodoController {
   @ApiOperation({ summary: 'Get todo item by id' })
   @Get(':id')
   async getTodoItemById(@Param() { id }: IdParamDto): Promise<TodoItemDto> {
-    return await this.todoService.getTodoItem(id);
+    return await this.todoService.getTodoItem(parseInt(id));
   }
 
   @ApiOperation({ summary: 'Create new todo item' })
@@ -46,12 +46,12 @@ export class TodoController {
     @Param() { id }: IdParamDto,
     @Body() request: UpdateTodoItemDto,
   ): Promise<TodoItemDto> {
-    return await this.todoService.updateTodoItem(id, request);
+    return await this.todoService.updateTodoItem(parseInt(id), request);
   }
 
   @ApiOperation({ summary: 'Delete todo item' })
   @Delete(':id')
   async deleteTodoItem(@Param() { id }: IdParamDto) {
-    await this.todoService.deleteTodoItem(id);
+    await this.todoService.deleteTodoItem(parseInt(id));
   }
 }

@@ -1,8 +1,8 @@
 {
   "name": "nest-typescript-starter",
   "private": true,
-  "version": "1.0.0",
-  "description": "Nest TypeScript starter repository",
+  "version": "0.1.0",
+  "description": "Todo App built with NestJS and TypeScript ",
   "license": "MIT",
   "engines": {
     "npm": ">=9.0.0 <10.0.0",
