@@ -7,7 +7,7 @@ export class CreateTodoItemDto {
   title: string;
 
   @ApiProperty()
-  @IsDateString()
+  @IsDateString({ strict: true })
   @IsOptional()
   deadline: string | undefined;
 }
