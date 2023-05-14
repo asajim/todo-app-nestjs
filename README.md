@@ -18,15 +18,15 @@ It can be accessed at https://github.com/asajim/todo-app-nextjs.
 1. Install Node.js and NPM.
 2. Use Node 18 (if you have nvm installed, you can do it by typing `nvm use 18`)
 3. Install the dependencies:
-   ```
+   ```bash
    $ npm install
    ```
 4. Run the database
-   ```
+   ```bash
    $ docker-compose up -d
    ```
 5. Start the development server:
-   ```
+   ```bash
    $ npm run start:dev
    ```
 6. Open your browser and navigate to `http://localhost:8080`.

@@ -1,5 +1,5 @@
 {
-  "name": "nest-typescript-starter",
+  "name": "todo-app-nestjs",
   "private": true,
   "version": "0.1.0",
   "description": "Todo App built with NestJS and TypeScript ",

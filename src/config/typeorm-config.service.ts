@@ -18,6 +18,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       migrations: ['./migrations/*.{ts,js}'],
       migrationsTableName: 'typeorm_migrations',
       logger: 'file',
+      dropSchema: process.env.NODE_ENV === 'test',
       // TODO: Disable this. Never use TRUE in production!
       synchronize: true,
     };
